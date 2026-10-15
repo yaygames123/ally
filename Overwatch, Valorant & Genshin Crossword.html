@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Overwatch, Valorant &amp; Genshin Crossword</title>
+<style>
+:root{--bg:#f6f0ff;--ink:#2a1f3d;--cell:#ffffff;--line:#cdb9e8;--gold:#ffd86b;--act:#e6d4ff;--bad:#ffb3b3;--accent:#7b2cbf;--mut:#6f5f8a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1226;--ink:#f1e8ff;--cell:#281c3a;--line:#5a4580;--gold:#b8901f;--act:#3f2a63;--bad:#8a2f2f;--accent:#c77dff;--mut:#b8a6d9}}
+:root[data-theme="dark"]{--bg:#1a1226;--ink:#f1e8ff;--cell:#281c3a;--line:#5a4580;--gold:#b8901f;--act:#3f2a63;--bad:#8a2f2f;--accent:#c77dff;--mut:#b8a6d9}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:14px 12px 40px}
+h1{font-size:22px;margin:0 0 4px;text-align:center}
+.sub{color:var(--mut);font-size:14px;text-align:center;margin:0 0 12px}
+#bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--act);border-radius:10px;padding:8px 12px;font-size:14px;margin-bottom:10px;min-height:20px;z-index:2}
+.wrap{overflow:hidden;padding-bottom:8px}
+#grid{display:grid;gap:2px;width:max-content;margin:0 auto}
+.cell{position:relative;width:28px;height:28px;background:var(--cell);border:1px solid var(--line);border-radius:3px}
+.won .cell.m{background:var(--gold);border-color:var(--ink)}#grid:not(.won) .cell.given{visibility:hidden}
+.cell.act{background:var(--act)}.won .cell.m.act{background:var(--gold);outline:2px solid var(--accent)}
+.cell.bad{background:var(--bad)}
+.cell input{width:100%;height:100%;border:0;background:transparent;text-align:center;font:700 16px system-ui;color:var(--ink);text-transform:uppercase;padding:0;outline:none;border-radius:3px}
+.cell.given input{color:var(--accent)}
+.cell i{position:absolute;top:0;left:2px;font:700 8px system-ui;color:var(--mut);font-style:normal;pointer-events:none}
+.btns{display:flex;gap:8px;justify-content:center;margin:12px 0}
+button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:600}
+button.s{background:var(--line);color:var(--ink)}
+#win{display:none;text-align:center;background:var(--gold);border:3px solid var(--accent);border-radius:14px;padding:16px;margin:10px 0;font-size:26px;font-weight:800}
+h2{font-size:16px;margin:14px 0 6px}
+ol{padding-left:0;list-style:none;margin:0}
+li{padding:7px 8px;border-radius:8px;font-size:14px;line-height:1.35}
+li b{color:var(--accent);margin-right:6px}li.act{background:var(--act)}
+.hint{font-size:13px;color:var(--mut)}
+.hop{display:flex;justify-content:center;gap:14px;font-size:26px;margin:0 0 8px}.hop span,.run span{display:inline-block;animation:hop 1s ease-in-out infinite}.hop span:nth-child(2){animation-delay:.2s}.hop span:nth-child(3){animation-delay:.4s}.hop span:nth-child(4){animation-delay:.6s}.hop span:nth-child(5){animation-delay:.8s}.run{position:fixed;bottom:calc(6px + env(safe-area-inset-bottom,0px));left:-50px;font-size:28px;animation:run 14s linear infinite;pointer-events:none;z-index:3}.run span{animation-duration:.6s}@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}@keyframes run{to{transform:translateX(calc(100vw + 100px))}}@media (prefers-reduced-motion:reduce){.hop span,.run span{animation:none}.run{display:none}}
+</style></head><body>
+<h1>Overwatch · Valorant · Genshin<br>Crossword</h1>
+<p class="sub">A crossword of character names from Overwatch, Valorant &amp; Genshin Impact. Each clue tells you which game it's from.</p>
+<div class="hop"><span>🐰</span><span>🐇</span><span>🐰</span><span>🐇</span><span>🐰</span></div>
+<div class="run"><span>🐇</span></div>
+<div id="bar">Tap a square to begin</div>
+<div id="win">WILL YOU BE MY GIRLFRIEND ALLY? 💜🐰<div style="font-size:15px;font-weight:600;margin-top:8px">Because you're beautiful, cute, pretty, amazing, funny, and perfect 💜</div><div style="font-size:15px;font-weight:600;margin-top:8px">And don't worry, there's more things to come. Things that take more effort than this, that's for sure. 🐰</div></div>
+<div class="wrap"><div id="grid"></div></div>
+<div class="btns"><button id="chk">Check</button><button class="s" id="clr">Clear</button></div>
+<h2>Across clues</h2><ol id="clues2"></ol><h2>Down clues</h2><ol id="clues"></ol>
+<p class="hint">Tap a square or a clue to start.</p>
+<script>
+const MSG="WILLYOUBEMYGIRLFRIENDALLY?",RM=11;
+const E=[
+[0,'WINSTON',"Overwatch: gorilla scientist"],
+[1,'MEI',"Overwatch: ice-powered hero"],
+[3,'LUCIO',"Overwatch: DJ who heals with music"],
+[4,'CASSIDY',"Overwatch: cowboy hero"],
+[5,'OMEN',"Valorant: shadowy teleporting agent"],
+[6,'YORU',"Valorant: sneaky Japanese agent"],
+[7,'BASTION',"Overwatch: robot that turns into a tank"],
+[8,'RAZE',"Valorant: explosives expert"],
+[9,'MOIRA',"Overwatch: scientist healer"],
+[10,'MERCY',"Overwatch: winged angel healer"],
+[11,'GEKKO',"Valorant: agent with little monster friends"],
+[12,'GENJI',"Overwatch: cyborg ninja"],
+[13,'REYNA',"Valorant: soul-eating agent"],
+[14,'WRECKINGBALL',"Overwatch: hamster in a rolling mech (two words)"],
+[15,'FADE',"Valorant: nightmare agent"],
+[16,'VIPER',"Valorant: poison agent"],
+[17,'ILLARI',"Overwatch: sun-powered healer"],
+[18,'SAGE',"Valorant: healer who can revive"],
+[19,'NEON',"Valorant: super-fast sliding agent"],
+[20,'HAZARD',"Overwatch: spiky tank hero"],
+[21,'ASHE',"Overwatch: white-haired gunslinger"],
+[23,'LYNEY',"Genshin: magician with a top hat"],
+[24,'ALOY',"Genshin: red-haired archer guest"]];
+const cells={},words=[];
+E.forEach(([c,w,clue])=>{const n=w.length,up=w[n-1]===MSG[c]&&w[0]!==MSG[c]||(w[n-1]===MSG[c]&&c%2===1&&w[0]===MSG[c]&&false);
+ const isUp=w[0]!==MSG[c];const top=isUp?RM-n+1:RM;const ks=[];
+ for(let i=0;i<n;i++){const k=(top+i)+","+c;ks.push(k);cells[k]=cells[k]||{r:top+i,c,L:w[i]};}
+ words.push({c,w,clue,top,ks,dn:1});});
+const AC=[[-6,3,"ECHO","Overwatch: flying robot who copies heroes"],[-6,13,"SIGMA","Overwatch: gravity-controlling tank"],[-10,13,"ORISA","Overwatch: robot tank with a javelin"],[-8,14,"CLOVE","Valorant: agent who can act after dying"],[-2,4,"ISO","Valorant: agent with an energy shield"],[-2,18,"ANA","Overwatch: sniper healer"],[6,0,"NAHIDA","Genshin: small grass-powered god"],[6,7,"NAVIA","Genshin: rock-powered lady with a hat"],[5,16,"DILUC","Genshin: red-haired fire swordsman"]];
+AC.forEach(([dr,c0,w,clue])=>{const r=RM+dr,ks=[];for(let i=0;i<w.length;i++){const k=r+","+(c0+i);ks.push(k);cells[k]=cells[k]||{r,c:c0+i,L:w[i]};}words.push({c:c0,w,clue,top:r,ks,dn:0});});
+for(let c=0;c<MSG.length;c++){const k=RM+","+c;if(!cells[k])cells[k]={r:RM,c,L:MSG[c],given:true};cells[k].m=true;}
+words.sort((a,b)=>a.top-b.top||a.c-b.c);const nm={};let nn=0;words.forEach(x=>{const k=x.ks[0];if(!nm[k])nm[k]=++nn;x.n=nm[k];});
+const sp=[3,6,8,10,20],g=document.getElementById("grid");
+const tr=[];for(let c=0;c<MSG.length;c++){tr.push("28px");if(sp.includes(c))tr.push("var(--sp)");}
+g.style.gridTemplateColumns=tr.join(" ");g.style.setProperty("--sp","0px");
+const inp={},el={};
+Object.entries(cells).forEach(([k,o])=>{
+ const d=document.createElement("div");d.className="cell"+(o.m?" m":"")+(o.given?" given":"");
+ d.style.gridColumn=o.c+sp.filter(s=>s<o.c).length+1;d.style.gridRow=o.r+1;
+ const i=document.createElement("input");i.maxLength=1;i.autocomplete="off";i.autocapitalize="characters";i.setAttribute("autocorrect","off");
+ if(o.given){i.value=o.L;i.readOnly=true;}
+ d.appendChild(i);o.ws=words.filter(x=>x.ks.includes(k));o.w=o.ws[0];
+ const st=o.ws.find(x=>x.ks[0]===k);if(st){const s=document.createElement("i");s.textContent=st.n;d.appendChild(s);}
+ g.appendChild(d);inp[k]=i;el[k]=d;
+ i.addEventListener("focus",()=>sel(o.ws.includes(cur)?cur:o.w));i.addEventListener("pointerdown",()=>{i._w=document.activeElement===i;});i.addEventListener("click",()=>{if(i._w&&o.ws.length>1)sel(o.ws[(o.ws.indexOf(cur)+1)%o.ws.length]);});
+ i.addEventListener("input",()=>{i.value=i.value.replace(/[^a-zA-Z]/g,"").toUpperCase().slice(-1);d.classList.remove("bad");
+  if(i.value&&cur){const j=cur.ks.indexOf(k)+1;if(j<cur.ks.length)inp[cur.ks[j]].focus();}win();});
+ i.addEventListener("keydown",e=>{if(e.key==="Backspace"&&!i.value&&cur){const j=cur.ks.indexOf(k)-1;if(j>=0){inp[cur.ks[j]].value="";inp[cur.ks[j]].focus();e.preventDefault();}}});
+});
+const ol=document.getElementById("clues"),ol2=document.getElementById("clues2"),lis=new Map();
+words.forEach(x=>{const li=document.createElement("li");li.innerHTML="<b>"+x.n+(x.dn?"↓":"→")+"</b>"+x.clue+" ("+x.w.length+")";
+ li.onclick=()=>inp[x.ks[0]].focus();(x.dn?ol:ol2).appendChild(li);lis.set(x,li);});
+let cur=null;function sel(w){cur=w;document.querySelectorAll(".act").forEach(e=>e.classList.remove("act"));
+ if(!w)return;w.ks.forEach(k=>el[k].classList.add("act"));lis.get(w).classList.add("act");
+ document.getElementById("bar").textContent=w.n+(w.dn?"↓ ":"→ ")+w.clue+" ("+w.w.length+")";}
+function win(){const ok=Object.entries(cells).filter(([k,o])=>o.m).every(([k,o])=>inp[k].value===o.L);g.classList.toggle("won",ok);g.style.setProperty("--sp",ok?"12px":"0px");fit();
+ document.getElementById("win").style.display=ok?"block":"none";if(ok)document.getElementById("win").scrollIntoView({behavior:"smooth",block:"center"});}
+document.getElementById("chk").onclick=()=>Object.entries(cells).forEach(([k,o])=>el[k].classList.toggle("bad",!!inp[k].value&&inp[k].value!==o.L));
+document.getElementById("clr").onclick=()=>{Object.entries(cells).forEach(([k,o])=>{if(!o.given)inp[k].value="";el[k].classList.remove("bad");});win();};
+function fit(){const wr=g.parentElement;g.style.transform="none";g.style.marginLeft="0";const w=g.scrollWidth,a=wr.clientWidth,s=Math.min(1,a/w);g.style.transformOrigin="top left";g.style.transform="scale("+s+")";g.style.marginLeft=Math.max(0,(a-w*s)/2)+"px";wr.style.height=(g.offsetHeight*s+8)+"px";}
+addEventListener("resize",fit);fit();
+</script></body></html>
